@@ -9,6 +9,8 @@ using System.Threading;
 using System.Net.NetworkInformation;
 using Codeplex.Data;
 using System.Collections.Generic;
+using System.Management;
+using System.Runtime.InteropServices;
 
 namespace BodyIndexData
 {
@@ -26,12 +28,15 @@ namespace BodyIndexData
 
         // 送信用
         static String JSON;
-
-        static String ip = "localhost";
+        static String ip = "127.0.0.1";
         static int port = 8000;
         static TcpClient tcpClient;
         static NetworkStream ns;
         static Byte[] StreamData;
+
+
+        [DllImport("iphlpapi.dll", ExactSpelling = true)]
+        private static extern int SendARP(int dstIp, int srcIp, byte[] mac, ref int macLen);
 
         // Slack用設定
         static String slackUrl;
@@ -47,6 +52,41 @@ namespace BodyIndexData
                 //channel識別用
                 phy = adapters[0].GetPhysicalAddress();
                 channel = phy.ToString();
+
+                //サーバ検出
+                /*Ping p = new Ping();
+                String ServerMAC = kinect_client.Properties.Settings.Default.ServerMAC.ToString();
+                for (int x = 1; x<= 255; ++x)
+                {
+                    PingReply pr = p.Send("192.168.11."+x.ToString(),50);
+                    if (pr.Status == IPStatus.Success)
+                    {
+                        //MACでサーバ判定
+                        Console.WriteLine(x.ToString()+":ping --- OK");
+                        IPAddress dst = IPAddress.Parse("192.168.11." + x.ToString());
+                        var mac = new byte[6];
+                        var macLen = mac.Length;
+                        var str = "応答なし";
+                        if (SendARP((int)dst.Address, 0, mac, ref macLen) == 0)
+                        {
+                            str = string.Format("{0:x2}-{1:x2}-{2:x2}-{3:x2}-{4:x2}-{5:x2}", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+                            Console.WriteLine(str);
+                            if (str == ServerMAC)
+                            {
+                                Console.WriteLine("MATCH");
+                                ip = "192.168.11." + x.ToString();
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine(x.ToString()+":ping --- NO");
+                    }
+                }*/
+
+
+
 
                 //Kinectを開く
                 kinect = KinectSensor.GetDefault();

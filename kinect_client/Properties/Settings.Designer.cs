@@ -31,5 +31,14 @@ namespace kinect_client.Properties {
                 return ((string)(this["SlackURL"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("d0-53-49-df-1a-e2")]
+        public string ServerMAC {
+            get {
+                return ((string)(this["ServerMAC"]));
+            }
+        }
     }
 }
